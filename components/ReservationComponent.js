@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Text, View, ScrollView, StyleSheet,
-    Picker, Switch, Button, Modal } from 'react-native';
+    Picker, Switch, Button, Alert } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import * as Animatable from 'react-native-animatable';
 
@@ -13,8 +13,7 @@ class Reservation extends Component {
             campers: 1,
             hikeIn: false,
             date: new Date(),
-            showCalendar: false,
-            showModal: false
+            showCalendar: false
         };
     }
 
@@ -22,13 +21,30 @@ class Reservation extends Component {
         title: 'Reserve Campsite'
     }
 
-    toggleModal() {
-        this.setState({showModal: !this.state.showModal});
-    }
-
     handleReservation() {
         console.log(JSON.stringify(this.state));
-        this.toggleModal();
+        const message = `Number of Campers: ${this.state.campers}
+                        \nHike-In? ${this.state.hikeIn}
+                        \nDate: ${this.state.date.toLocaleDateString('en-US')}`;
+        Alert.alert(
+            'Begin Search?',
+            message,
+            [
+                {
+                    text: 'Cancel', 
+                    onPress: () => {
+                        console.log('Reservation Search Canceled');
+                        this.resetForm();
+                    }, 
+                    style: 'cancel'
+                },
+                {
+                    text: 'OK', 
+                    onPress: () => {this.resetForm()}
+                }
+            ],
+            { cancelable: false }
+        );
     }
 
     resetForm() {
@@ -36,13 +52,12 @@ class Reservation extends Component {
             campers: 1,
             hikeIn: false,
             date: new Date(),
-            showCalendar: false,
-            showModal: false
+            showCalendar: false
         });
     }
 
     render() {
-        return(
+        return (
             <ScrollView>
                 <Animatable.View
                     animation='zoomIn'
@@ -123,22 +138,6 @@ const styles = StyleSheet.create({
     },
     formItem: {
         flex: 1
-    },
-    modal: {
-        justifyContent: 'center',
-        margin: 20
-    },
-    modalTitle: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        backgroundColor: '#5637DD',
-        textAlign: 'center',
-        color: '#fff',
-        marginBottom: 20
-    },
-    modalText: {
-        fontSize: 18,
-        margin: 10
     }
 });
 
